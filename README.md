@@ -14,6 +14,24 @@ A backend system for managing financial records with role-based access control a
 
 ---
 
+## 🏗️ Architecture
+
+Client → Express Routes → Controllers → Services → Prisma ORM → PostgreSQL
+
+Authentication Middleware → RBAC Middleware → Route Access Control
+
+## 🔄 Request Flow Example
+
+1. User sends request with JWT token  
+2. Authentication middleware verifies token  
+3. RBAC middleware checks user role  
+4. Controller handles request  
+5. Service layer processes business logic  
+6. Prisma interacts with database  
+7. Response returned in standardized format 
+
+---
+
 ## 🚀 Tech Stack
 
 * **Backend:** Node.js, Express.js
@@ -564,7 +582,25 @@ DELETE /api/records/:id
 * Automatically excluded from analytics
 
 
+---
 
+## ⚠️ Edge Case Handling
+
+* Prevents access to other users’ data using userId filtering  
+* Handles duplicate categories (Food vs food)  
+* Ensures deleted records are excluded from analytics  
+* Validates all inputs before DB operations  
+* Graceful error handling for invalid requests
+
+---
+
+## 🔐 Security Considerations
+
+* JWT-based authentication  
+* Role-based access control (RBAC)  
+* Password hashing using bcrypt  
+* Protected routes using middleware  
+* Input validation using Zod
 
 ---
 
