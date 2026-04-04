@@ -261,64 +261,6 @@ Response: Allowed
 
 ---
 
-## ⚠️ Edge Case Handling
-
-* Prevents cross-user data access
-* Handles inactive users
-* Case-insensitive search
-* Soft delete consistency
-* Input validation for all endpoints
-
----
-
-## 🔐 Security Considerations
-
-* JWT authentication
-* Password hashing
-* RBAC middleware
-* Input validation (Zod)
-* Protected routes
-
----
-
-## 🧠 Design Approach
-
-* Layered architecture (Controller → Service → ORM)
-* Prisma for maintainable database interaction
-* PostgreSQL for structured financial data
-* JWT for stateless authentication
-* RBAC for secure role-based access
-* Focus on scalability and clean code
-
----
-
-## ⚖️ Trade-offs
-
-* Rate limiting not implemented (can be added for production)
-* Unit tests not included due to scope
-* JWT used instead of session-based authentication
-
----
-
-## 📌 Assumptions
-
-* Users access only their own records
-* Date filtering requires both start and end date
-* Single currency system
-* No third-party integrations
-
----
-
-## 🔮 Future Improvements
-
-* Rate limiting
-* Swagger API documentation
-* Unit and integration tests
-* Redis caching
-* Refresh tokens
-
-
----
 
 ## 📡 API Examples (Detailed)
 
@@ -570,6 +512,65 @@ JWT_SECRET=your_secret_key
 npx prisma migrate dev
 npm run dev
 ```
+
+---
+
+## ⚠️ Edge Case Handling
+
+* Prevents cross-user data access
+* Handles inactive users
+* Case-insensitive search
+* Soft delete consistency
+* Input validation for all endpoints
+
+---
+
+## 🔐 Security Considerations
+
+* JWT authentication
+* Password hashing
+* RBAC middleware
+* Input validation (Zod)
+* Protected routes
+
+---
+
+## 🧠 Design Approach
+
+* Layered architecture (Controller → Service → ORM)
+* Prisma for maintainable database interaction
+* PostgreSQL for structured financial data
+* JWT for stateless authentication
+* RBAC for secure role-based access
+* Focus on scalability and clean code
+
+---
+
+## ⚖️ Trade-offs
+
+* Rate limiting not implemented (can be added for production)
+* Unit tests not included due to scope
+* JWT used instead of session-based authentication
+
+---
+
+## 📌 Assumptions
+
+* Users access only their own records
+* Date filtering requires both start and end date
+* Single currency system
+* No third-party integrations
+
+---
+
+## 🔮 Future Improvements
+
+* Rate limiting
+* Swagger API documentation
+* Unit and integration tests
+* Redis caching
+* Refresh tokens
+
 
 ---
 
