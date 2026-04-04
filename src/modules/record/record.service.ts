@@ -13,31 +13,36 @@ export const getRecords = async (filters: any, userId: string) => {
     //adding pagination too
     const page = Number(filters.page) || 1;
     const limit = Number(filters.limit) || 5;
-
-    return prisma.record.findMany({
-        where: {
-            userId,
-            isDeleted: false,
-            ...(filters.type && { type: filters.type }),
-            ...(filters.category && { category: filters.category }),
-            //adding insensitive search too
-            ...(filters.search && {
-                category: {
-                    contains: filters.search,
-                    mode: "insensitive",
-                },
-            }),
-        },
+    const where = {
+        userId,
+        isDeleted: false,
+        ...(filters.type && { type: filters.type }),
+        ...(filters.category && { category: filters.category }),
+        ...(filters.search && {
+            category: {
+                contains: filters.search,
+                mode: "insensitive",
+            },
+        }),
+    };
+    const total = await prisma.record.count({ where });
+    const records = await prisma.record.findMany({
+        where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: {
-            date: "desc",
-        },
+        orderBy: { date: "desc" },
     });
+
+    return {
+        records,
+        total,
+        page,
+        limit,
+    };
 };
 
 export const updateRecord = async (id: string, data: any, userId: string) => {
-    return prisma.record.updateMany({
+    return prisma.record.update({
         where: {
             id,
             userId,
@@ -47,7 +52,7 @@ export const updateRecord = async (id: string, data: any, userId: string) => {
 };
 
 export const deleteRecord = async (id: string, userId: string) => {
-    return prisma.record.updateMany({
+    return prisma.record.update({
         where: {
             id,
             userId,
