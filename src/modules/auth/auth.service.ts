@@ -13,8 +13,10 @@ export const registerUser = async (
         where: { email },
     });
 
-    if (existingUser) {
-        throw new Error("User already exists");
+    if(existingUser){
+        const error=new Error("User already exists")
+        ;(error as any).status=400
+        throw error
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,24 +43,30 @@ export const loginUser = async (email: string, password: string) => {
         where: { email },
     });
 
-    if (!user) {
-        throw new Error("Invalid credentials");
+    if(!user){
+        const error=new Error("Invalid credentials")
+        ;(error as any).status=401
+        throw error
+    }
+    if(!user.isActive){
+        const error=new Error("User is inactive")
+        ;(error as any).status=403
+        throw error
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-    if (!isMatch) {
-        throw new Error("Invalid credentials");
+    if(!isMatch){
+        const error=new Error("Invalid credentials")
+        ;(error as any).status=401
+        throw error
     }
 
-    const token = jwt.sign(
-        {
-            userId: user.id,
-            role: user.role,
-        },
-        JWT_SECRET,
-        { expiresIn: "1d" }
-    );
+    const token = jwt.sign({
+        userId:user.id,
+        role:user.role,
+        isActive:user.isActive
+    },JWT_SECRET,{expiresIn:"1d"})
 
     return { token };
 };

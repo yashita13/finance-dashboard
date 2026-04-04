@@ -4,6 +4,7 @@ export const createRecord = async (data: any, userId: string) => {
     return prisma.record.create({
         data: {
             ...data,
+            date:new Date(data.date),
             userId,
         },
     });

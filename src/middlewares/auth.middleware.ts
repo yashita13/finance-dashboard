@@ -24,10 +24,15 @@ export const authenticate = (
 
         const token = authHeader.split(" ")[1];
 
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        if(!decoded.isActive){
+            return res.status(403).json({
+                success:false,
+                message:"User is inactive"
+            })
+        }
 
         req.user = decoded;
-
         next();
     } catch (error) {
         return res.status(401).json({
@@ -39,6 +44,10 @@ export const authenticate = (
 
 export const authorize = (...roles: string[]) => {
     return (req: AuthRequest, res: Response, next: NextFunction) => {
+        if(req.user?.role==="SUPERADMIN"){
+            return next()
+        }
+
         if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).json({
                 success: false,
