@@ -5,14 +5,14 @@ A backend system for managing financial records with role-based access control a
 ---
 
 ## Key Highlights
-* Built using modular service-controller architecture  
-* Implemented soft delete with consistent filtering  
-* Designed analytics engine  
-* Integrated Zod validation middleware  
-* Enforced RBAC using middleware  
-* Supports pagination, search, and multi-filter queries
-* Pagination metadata (total count, total pages)
-* Centralized error handling middleware
+* Built using **modular service-controller** architecture (**scalable**)
+* Built-in analytics engine (**income/expense** calculations, **monthly trends**, **category insights**)
+* Implemented **soft delete** with consistent filtering   
+* Input **validation using Zod** middleware  
+* Role-based access control (**RBAC**) via middleware  
+* Supports **pagination**, **search**, and **multi-filter** queries
+* Pagination **metadata** (total count, total pages)
+* Centralized **error handling** middleware
 
 ---
 
