@@ -4,6 +4,13 @@ A backend system for managing financial records with role-based access control a
 
 ---
 
+## API Documentation
+
+Postman Collection: https://documenter.getpostman.com/view/45527070/2sBXiqDoHU
+
+This collection contains all API endpoints including authentication, user management, and transactions.
+
+
 ## Key Highlights
 * Modular **service-controller architecture**
 * **RBAC with user management** (role updates + activation control)
@@ -502,6 +509,7 @@ npm install
 ### Environment
 
 ```
+PORT=5000
 DATABASE_URL=your_database_url
 JWT_SECRET=your_secret_key
 ```
@@ -566,7 +574,7 @@ npm run dev
 ## 🔮 Future Improvements
 
 * Rate limiting
-* Swagger API documentation
+* Swagger API documentation (Postman api documentation done)
 * Unit and integration tests
 * Redis caching
 * Refresh tokens
