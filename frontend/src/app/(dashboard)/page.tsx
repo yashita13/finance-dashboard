@@ -2,6 +2,7 @@
 
 import { OverviewCards } from "@/features/dashboard/OverviewCards";
 import { AnalyticsCharts } from "@/features/dashboard/AnalyticsCharts";
+import { RecentActivity } from "@/features/dashboard/RecentActivity";
 import { motion } from "framer-motion";
 
 export default function DashboardPage() {
@@ -27,6 +28,7 @@ export default function DashboardPage() {
 
       <OverviewCards />
       <AnalyticsCharts />
+      <RecentActivity />
     </div>
   );
 }

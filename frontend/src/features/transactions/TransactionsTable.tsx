@@ -26,10 +26,15 @@ export const TransactionsTable = () => {
   const [loading, setLoading] = useState(true);
   
   // Pagination & Filters
+  const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"ALL" | "INCOME" | "EXPENSE">("ALL");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [sort, setSort] = useState("date");
+  const [order, setOrder] = useState("desc");
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,8 +50,12 @@ export const TransactionsTable = () => {
   const fetchRecords = async () => {
     setLoading(true);
     try {
-      const typeQuery = typeFilter !== "ALL" ? `&type=${typeFilter}` : "";
-      const res = await api.get(`/records?page=${page}&limit=7&search=${search}${typeQuery}`);
+      const payload: any = { page, limit, search, sort, order };
+      if (typeFilter !== "ALL") payload.type = typeFilter;
+      if (startDate) payload.startDate = startDate;
+      if (endDate) payload.endDate = endDate;
+
+      const res = await api.get(`/records`, { params: payload });
       if (res.data?.success) {
         setRecords(res.data.data);
         setTotalPages(res.data.meta.totalPages || 1);
@@ -63,7 +72,7 @@ export const TransactionsTable = () => {
        fetchRecords();
     }, 300); // debounce search
     return () => clearTimeout(timer);
-  }, [page, search, typeFilter]);
+  }, [page, limit, search, typeFilter, startDate, endDate, sort, order]);
 
   const canManage = user?.role === "SUPERADMIN" || user?.role === "ADMIN";
 
@@ -116,38 +125,79 @@ export const TransactionsTable = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Input 
-            placeholder="Search records..." 
-            icon={<Search className="w-4 h-4" />}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full sm:w-64"
-          />
-          <select 
-            className="bg-[var(--color-glass)] border border-[var(--color-glass-border)] rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-start)] appearance-none cursor-pointer"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value as any)}
-          >
-            <option value="ALL">All Types</option>
-            <option value="INCOME">Income</option>
-            <option value="EXPENSE">Expense</option>
-          </select>
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
+           <div className="flex flex-wrap items-center gap-3 w-full">
+             <Input 
+               placeholder="Search category or title..." 
+               icon={<Search className="w-4 h-4" />}
+               value={search}
+               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+               className="w-full sm:w-56"
+             />
+             <select 
+               className="bg-[var(--color-glass)] border border-[var(--color-glass-border)] rounded-xl py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-start)] appearance-none cursor-pointer text-sm"
+               value={typeFilter}
+               onChange={(e) => { setTypeFilter(e.target.value as any); setPage(1); }}
+             >
+               <option value="ALL">All Types</option>
+               <option value="INCOME">Income</option>
+               <option value="EXPENSE">Expense</option>
+             </select>
+             
+             <select 
+                value={sort}
+                onChange={(e) => { setSort(e.target.value); setPage(1); }}
+                className="bg-[var(--color-glass)] border border-[var(--color-glass-border)] text-white rounded-xl px-4 py-3 text-sm outline-none w-full md:w-36 focus:ring-2 focus:ring-[var(--color-primary-start)] cursor-pointer"
+             >
+                <option value="date">Sort Date</option>
+                <option value="amount">Sort Amount</option>
+             </select>
+             
+             <button 
+                onClick={() => setOrder(order === "desc" ? "asc" : "desc")}
+                className="bg-[var(--color-glass)] border border-[var(--color-glass-border)] text-white rounded-xl px-4 py-3 text-sm outline-none hover:bg-white/5 transition-colors cursor-pointer font-bold"
+                title="Toggle Sorting Order"
+             >
+                {order === "desc" ? "DESC" : "ASC "}
+             </button>
+           </div>
+           
+           {canManage && (
+             <Button onClick={() => openForm()} className="whitespace-nowrap w-full sm:w-auto shadow-[0_0_20px_var(--color-primary-start)] px-6">
+               <Plus className="w-4 h-4" />
+               <span>Add Record</span>
+             </Button>
+           )}
         </div>
         
-        {canManage && (
-          <Button onClick={() => openForm()} className="whitespace-nowrap w-full sm:w-auto shadow-[0_0_20px_var(--color-primary-start)] px-6">
-            <Plus className="w-4 h-4" />
-            <span>Add Record</span>
-          </Button>
-        )}
+        {/* Date Ranges */}
+        <div className="flex flex-wrap items-center gap-4">
+           <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs font-semibold uppercase tracking-wider">From:</span>
+              <input 
+                type="date"
+                value={startDate}
+                onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
+                className="bg-[var(--color-glass)] border border-[var(--color-glass-border)] text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary-start)] [color-scheme:dark] cursor-pointer"
+              />
+           </div>
+           <div className="flex items-center gap-2">
+              <span className="text-white/50 text-xs font-semibold uppercase tracking-wider">To:</span>
+              <input 
+                type="date"
+                value={endDate}
+                onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
+                className="bg-[var(--color-glass)] border border-[var(--color-glass-border)] text-white rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary-start)] [color-scheme:dark] cursor-pointer"
+              />
+           </div>
+        </div>
       </div>
 
       {/* Table Card */}
       <Card className="p-0 overflow-hidden" disableHover>
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="border-b border-[var(--color-glass-border)] bg-white/5">
                 <th className="py-4 px-6 text-xs font-semibold text-white/50 uppercase tracking-wider">Type</th>
@@ -212,15 +262,26 @@ export const TransactionsTable = () => {
         </div>
         
         {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-[var(--color-glass-border)] bg-black/10">
+        <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-[var(--color-glass-border)] bg-black/10 gap-4">
+           <div className="flex items-center gap-4">
              <span className="text-white/50 text-sm">Page {page} of {totalPages}</span>
+             <select 
+               value={limit}
+               onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
+               className="bg-transparent border border-white/20 text-white rounded-lg px-2 py-1 text-xs outline-none focus:border-white/50 cursor-pointer"
+             >
+               <option className="bg-[var(--color-background)]" value="5">5 / page</option>
+               <option className="bg-[var(--color-background)]" value="10">10 / page</option>
+               <option className="bg-[var(--color-background)]" value="25">25 / page</option>
+             </select>
+           </div>
+           {totalPages > 1 && (
              <div className="flex items-center gap-2">
                 <Button variant="secondary" className="py-2 px-4 text-sm rounded-lg" disabled={page === 1} onClick={() => setPage(p => p-1)}>Previous</Button>
                 <Button variant="secondary" className="py-2 px-4 text-sm rounded-lg" disabled={page === totalPages} onClick={() => setPage(p => p+1)}>Next</Button>
              </div>
-          </div>
-        )}
+           )}
+        </div>
       </Card>
 
       {/* Transaction Modal */}

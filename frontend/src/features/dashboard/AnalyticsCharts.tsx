@@ -7,12 +7,14 @@ import { Card } from "@/components/ui/Card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
 interface ChartData {
-  monthly: any[];
-  categories: any[];
+  monthlyTrends: any;
+  weeklyTrends: any;
+  categoryBreakdown: any;
 }
 
 export const AnalyticsCharts = () => {
   const [data, setData] = useState<ChartData | null>(null);
+  const [trendView, setTrendView] = useState<"monthly" | "weekly">("weekly");
   const user = useAuthStore(s => s.user);
 
   useEffect(() => {
@@ -20,21 +22,7 @@ export const AnalyticsCharts = () => {
       try {
         const res = await api.get("/summary");
         if (res.data?.success) {
-          const raw = res.data.data;
-          
-          const monthly = Object.entries(raw.monthlyTrends || {}).map(([key, value]: any) => ({
-            name: key,
-            Income: value.income,
-            Expense: value.expense
-          })).sort((a,b) => a.name.localeCompare(b.name));
-
-          const categories = Object.entries(raw.categoryBreakdown || {}).map(([key, value]: any) => ({
-            name: key,
-            Expense: value.expense,
-            Income: value.income
-          })).sort((a,b) => b.Expense - a.Expense).slice(0, 5);
-          
-          setData({ monthly, categories });
+          setData(res.data.data);
         }
       } catch (err) {
         console.error("Failed to load charts", err);
@@ -50,6 +38,19 @@ export const AnalyticsCharts = () => {
      return <div className="animate-pulse h-80 rounded-2xl bg-white/5 w-full mt-4" />;
   }
 
+  const currentTrends = trendView === "monthly" ? data.monthlyTrends : data.weeklyTrends;
+  const areaData = Object.entries(currentTrends || {}).map(([key, value]: any) => ({
+    name: key,
+    Income: value.income,
+    Expense: value.expense
+  })).sort((a, b) => a.name.localeCompare(b.name));
+
+  const categories = Object.entries(data.categoryBreakdown || {}).map(([key, value]: any) => ({
+    name: key,
+    Expense: value.expense,
+    Income: value.income
+  })).sort((a, b) => b.Expense - a.Expense).slice(0, 5);
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8 w-full z-10 relative">
       <Card
@@ -60,10 +61,25 @@ export const AnalyticsCharts = () => {
          className="pt-6 h-[400px]"
          disableHover
       >
-        <h3 className="text-white/90 font-semibold mb-6 px-2">Income vs Expense (Monthly)</h3>
-        <div className="h-[300px] w-full">
+        <div className="px-2 mb-6 flex items-center justify-between">
+           <div>
+              <h3 className="text-white/90 font-semibold mb-1">Income vs Expense ({trendView === "monthly" ? "Monthly" : "Weekly"})</h3>
+              <p className="text-sm text-white/40">Visual flow of overarching transactional balance vectors.</p>
+           </div>
+           <div className="flex bg-[var(--color-background)] rounded-lg p-1 border border-white/10">
+              <button 
+                 onClick={() => setTrendView("monthly")}
+                 className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${trendView === "monthly" ? "bg-[var(--color-primary-start)] text-white shadow-md" : "text-white/50 hover:text-white"}`}
+              >Monthly</button>
+              <button 
+                 onClick={() => setTrendView("weekly")}
+                 className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${trendView === "weekly" ? "bg-[var(--color-primary-start)] text-white shadow-md" : "text-white/50 hover:text-white"}`}
+              >Weekly</button>
+           </div>
+        </div>
+        <div className="h-[260px] w-full">
           <ResponsiveContainer width="99%" height="100%">
-            <AreaChart data={data.monthly} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <AreaChart data={areaData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="var(--color-success)" stopOpacity={0.3}/>
@@ -100,7 +116,7 @@ export const AnalyticsCharts = () => {
         <h3 className="text-white/90 font-semibold mb-6 px-2">Top Expenses by Category</h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="99%" height="100%">
-            <BarChart data={data.categories} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <BarChart data={categories} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                    <stop offset="0%" stopColor="var(--color-primary-start)" />

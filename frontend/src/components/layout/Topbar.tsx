@@ -2,10 +2,10 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/Button";
-import { LogOut, Bell } from "lucide-react";
+import { LogOut, Bell, Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-export const Topbar = () => {
+export const Topbar = ({ onOpenSidebar }: { onOpenSidebar?: () => void }) => {
   const logout = useAuthStore(state => state.logout);
   const pathname = usePathname();
   
@@ -19,8 +19,11 @@ export const Topbar = () => {
   const currentTitle = titleMap[pathname] || "Dashboard";
 
   return (
-    <header className="h-20 border-b border-[var(--color-glass-border)] bg-[var(--color-background)]/40 backdrop-blur-md sticky top-0 z-10 px-8 flex items-center justify-between">
-      <div>
+    <header className="h-20 border-b border-[var(--color-glass-border)] bg-[var(--color-background)]/40 backdrop-blur-md sticky top-0 z-10 px-4 md:px-8 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <button onClick={onOpenSidebar} className="md:hidden p-2 -ml-2 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition-colors">
+          <Menu className="w-6 h-6" />
+        </button>
         <h1 className="text-2xl font-semibold text-white">
           {currentTitle}
         </h1>

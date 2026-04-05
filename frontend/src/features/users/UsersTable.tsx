@@ -59,8 +59,8 @@ export const UsersTable = () => {
 
   return (
     <Card className="p-0 overflow-hidden" disableHover>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
+      <div className="overflow-x-auto w-full">
+        <table className="w-full text-left border-collapse min-w-[700px]">
           <thead className="bg-white/5 border-b border-[var(--color-glass-border)]">
             <tr>
               <th className="py-4 px-6 text-xs text-white/50 uppercase tracking-wider">Email</th>

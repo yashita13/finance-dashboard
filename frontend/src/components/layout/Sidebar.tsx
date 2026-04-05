@@ -2,12 +2,12 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ReceiptText, Users, LogOut, Server } from "lucide-react";
+import { LayoutDashboard, ReceiptText, Users, LogOut, Server, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
-export const Sidebar = () => {
+export const Sidebar = ({ onClose }: { onClose?: () => void }) => {
   const { user } = useAuthStore();
   const pathname = usePathname();
 
@@ -21,19 +21,26 @@ export const Sidebar = () => {
   const filteredLinks = links.filter(link => user && link.roles.includes(user.role));
 
   return (
-    <div className="w-64 flex-shrink-0 min-h-screen border-r border-[var(--color-glass-border)] bg-[var(--color-background)]/80 backdrop-blur-3xl sticky top-0 flex flex-col p-6 z-20">
-      <div className="flex items-center gap-3 mb-10 pl-2">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary-start)] to-[var(--color-primary-end)] flex items-center justify-center shadow-[0_0_15px_var(--color-primary-start)]">
-          <LayoutDashboard className="w-5 h-5 text-white" />
+    <div className="w-64 flex-shrink-0 min-h-screen border-r border-[var(--color-glass-border)] bg-[var(--color-background)]/90 backdrop-blur-3xl sticky top-0 flex flex-col p-6 z-20">
+      <div className="flex items-center justify-between gap-2 mb-10 pl-2">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary-start)] to-[var(--color-primary-end)] flex items-center justify-center shadow-[0_0_15px_var(--color-primary-start)]">
+            <LayoutDashboard className="w-5 h-5 text-white" />
+          </div>
+          <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">MoneyBoard</h2>
         </div>
-        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">MoneyBoard</h2>
+        {onClose && (
+          <button onClick={onClose} className="md:hidden p-2 text-white/50 hover:text-white rounded-lg hover:bg-white/10 transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 space-y-2">
         {filteredLinks.map((link) => {
           const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
           return (
-            <Link key={link.name} href={link.href} className="block relative">
+            <Link key={link.name} href={link.href} onClick={onClose} className="block relative">
               {isActive && (
                 <motion.div
                   layoutId="activeTab"
