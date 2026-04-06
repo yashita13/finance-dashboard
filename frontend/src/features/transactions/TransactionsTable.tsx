@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Search, Plus, Loader2, ArrowUpRight, ArrowDownRight, Edit2, Trash2, Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 interface RecordItem {
   id: string;
@@ -76,6 +77,14 @@ export const TransactionsTable = () => {
 
   const canManage = user?.role === "SUPERADMIN" || user?.role === "ADMIN";
 
+  // Smart Categorization Logic
+  useEffect(() => {
+    const cat = category.toLowerCase();
+    if (cat.includes("salary") || cat.includes("freelance")) {
+      setType("INCOME");
+    }
+  }, [category]);
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
@@ -83,13 +92,16 @@ export const TransactionsTable = () => {
       const payload = { amount: Number(amount), type, category, date };
       if (editingRecord) {
         await api.put(`/records/${editingRecord.id}`, payload);
+        toast.success("Transaction modified successfully.");
       } else {
         await api.post("/records", payload);
+        toast.success("Transaction securely isolated inside ledger.");
       }
       setIsModalOpen(false);
       fetchRecords(); // refresh
     } catch (err) {
       console.error("Failed to save record", err);
+      toast.error("Action denied.");
     } finally {
       setFormLoading(false);
     }
@@ -99,9 +111,11 @@ export const TransactionsTable = () => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
     try {
       await api.delete(`/records/${id}`);
+      toast.success("Target successfully stripped from ledger.");
       fetchRecords(); // refresh
     } catch (err) {
       console.error("Failed to delete record", err);
+      toast.error("Action denied.");
     }
   };
 

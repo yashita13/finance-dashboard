@@ -12,7 +12,7 @@ export const Sidebar = ({ onClose }: { onClose?: () => void }) => {
   const pathname = usePathname();
 
   const links = [
-    { name: "Overview", href: "/", icon: LayoutDashboard, roles: ["SUPERADMIN", "ADMIN", "ANALYST", "VIEWER"] },
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["SUPERADMIN", "ADMIN", "ANALYST", "VIEWER"] },
     { name: "Transactions", href: "/transactions", icon: ReceiptText, roles: ["SUPERADMIN", "ADMIN", "ANALYST"] },
     { name: "Users", href: "/users", icon: Users, roles: ["SUPERADMIN", "ADMIN"] },
     { name: "System Config", href: "/system", icon: Server, roles: ["SUPERADMIN"] },

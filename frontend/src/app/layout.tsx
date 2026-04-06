@@ -6,12 +6,12 @@ import "./globals.css";
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
-  title: "MoneyBoard",
-  description: "Advanced Financial Analytics Dashboard",
+  title: "MoneyBoard | Cyber Intelligence Node",
+  description: "Advanced High-Density Financial Tracking Architecture",
 };
 
 export default function RootLayout({

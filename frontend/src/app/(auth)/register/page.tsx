@@ -40,35 +40,49 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden p-4">
-      {/* Decorative Blob */}
-      <motion.div 
-        animate={{ rotate: -360, scale: [1, 1.2, 1] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[600px] h-[600px] rounded-full bg-[var(--color-primary-end)]/20 blur-[120px] -z-10"
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="w-full max-w-md"
-      >
-        <div className="glass-panel p-8 rounded-3xl relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
+    <div className="min-h-screen flex text-white font-sans overflow-hidden bg-[#050505]">
+      
+      {/* Neo-Glassmorphic Split Left */}
+      <div className="hidden lg:flex w-1/2 relative flex-col justify-center items-center border-r border-white/5 z-0">
+          <div className="absolute top-[20%] left-[20%] w-[50%] h-[50%] bg-[var(--color-primary-start)]/20 blur-[140px] rounded-full pointer-events-none" />
+          <div className="absolute bottom-[20%] right-[20%] w-[40%] h-[40%] bg-[var(--color-primary-end)]/20 blur-[140px] rounded-full pointer-events-none" />
           
-          <div className="text-center mb-8 relative z-10">
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="w-16 h-16 mx-auto bg-gradient-to-tr from-[var(--color-primary-start)] to-[var(--color-primary-end)] rounded-2xl flex items-center justify-center shadow-[0_0_30px_var(--color-primary-start)] mb-6"
-            >
-              <TrendingUp className="text-white w-8 h-8" />
-            </motion.div>
-            <h1 className="text-3xl font-bold mb-2">Create Account</h1>
-            <p className="text-white/50 text-sm">Join to access premium analytics</p>
-          </div>
+          <motion.div 
+             initial={{ scale: 0.8, opacity: 0 }}
+             animate={{ scale: 1, opacity: 1 }}
+             transition={{ duration: 1, ease: "easeOut" }}
+             className="relative z-10 flex flex-col items-center"
+          >
+             <div className="w-40 h-40 rounded-3xl bg-gradient-to-br from-[var(--color-primary-start)] to-[var(--color-primary-end)] flex items-center justify-center shadow-[0_0_50px_var(--color-primary-start)] mb-8">
+                <span className="text-7xl font-black text-white">₹</span>
+             </div>
+             <h1 className="text-5xl font-black tracking-tighter text-white">MoneyBoard</h1>
+             <p className="text-white/50 font-semibold mt-4 tracking-widest uppercase text-sm">Terminal Initialization Protocol</p>
+          </motion.div>
+      </div>
+
+      {/* Right Side Auth Portal */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center relative p-8 z-10">
+        {/* Decorative Blob Mobile */}
+        <motion.div 
+          animate={{ rotate: -360, scale: [1, 1.1, 1] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[400px] h-[400px] rounded-full bg-[var(--color-primary-end)]/10 blur-[100px] -z-10 lg:hidden"
+        />
+
+        <motion.div
+           initial={{ opacity: 0, x: 20 }}
+           animate={{ opacity: 1, x: 0 }}
+           transition={{ duration: 0.8, ease: "easeOut" }}
+           className="w-full max-w-md"
+        >
+          <div className="neo-glass p-8 rounded-3xl relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none" />
+            
+            <div className="text-center mb-8 relative z-10">
+              <h1 className="text-3xl font-black tracking-tighter mb-2">Create Account</h1>
+              <p className="text-white/50 text-sm">Join to access premium analytics</p>
+            </div>
 
           <form onSubmit={handleRegister} className="space-y-4 relative z-10">
             <Input
@@ -122,6 +136,7 @@ export default function RegisterPage() {
           </form>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 }
